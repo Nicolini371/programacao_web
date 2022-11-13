@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <style>
+        html{
+            font-family: sans-serif;
+        }
+
+        body{
+            width: 50%;
+            max-width: 800px;
+            min-width: 480px;
+            margin: 0 auto;
+        }
+        .form input[type="number"]{
+            width: 200px;
+        }
+
+    </style>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Descubra o número</title>
+</head>
+<body>
+    <h1>Descubra o número!</h1>
+    <p>Selecionamos um número aleatório entre 1 e 100. Descubra-o em 10 turnos. Vamos dizer se seu palpite está abaixo ou acima do número escolhido.</p>
+
+    <div class="form">
+        <label for="guessField">Digite seu palpite: </label>
+        <input type="number" min="1" max="100" required id="guessField" class="guessField">
+        <input type="submit" value="Enviar palpite" class="guessSubmit">
+    </div>
+
+    <div class="resultParas">
+        <p class="guesses"></p>
+        <p class="lastResult"></p>
+        <p class="lowOrhigh"></p>
+    </div>
+
+    <script>
+        //Definindo variáveis do jogo
+        //Essa variável seta um número aleatório para ser adivinhado 
+        var randNum = Math.floor(Math.random() * 100) + 1;
+
+        //instanciando as classes para que possam ser manipuladas
+        var guesses = document.querySelector('.guesses')
+
+        var lastResult = document.querySelector('.lastResult')
+
+        var lowOrhigh = document.querySelector('.lowOrhigh')
+
+        var guessSubmit = document.querySelector('.guessSubmit ')
+
+        var guessField = document.querySelector('.guessField')
+
+        //Variável de controle
+        var guessCount = 1;
+        //instanciando o botão para reiniciar o jogo
+        var restartButton;
+
+        // Adiciona o Cursor diretamente no input assim que a página carrega
+        guessField.focus();
+
+
+        //Fazendo a primeira função do game
+        function conferirPalpite(){
+            //Mostrando os palpites do jogador
+            //Variável que recebera o valor do campo palpite
+            var palpiteUsuario = Number(guessField.value);
+            //condicional que inicia a exibição dos palpites em tela
+            if (guessCount === 1){
+                guesses.textContent = 'Palpites anteriores: ';
+            }
+            //Adicionando valores futuros a exibição dos palpites
+            guesses.textContent += palpiteUsuario + ' ';
+
+            //Definindo condicionais do game
+            //Condicional da vitória
+            if (palpiteUsuario === randNum){
+                lastResult.textContent = 'Parabéns! Você acertou!';
+                lastResult.style.backgroundColor = 'green';
+                lowOrhigh.textContent = '';
+                configFimDeJogo();
+            //Condicional da derrota
+            }else if (guessCount === 10){
+                lastResult.textContent = '!!!FIM DE JOGO!!!';
+                lowOrhigh.textContent = '';
+                configFimDeJogo();
+            //Condicional dos palpites
+            }else{
+                lastResult.textContent = 'Errado!';
+                lastResult.style.backgroundColor = 'red';
+                //Caso o palpite esteja abaixo do número sorteado
+                if(palpiteUsuario < randNum){
+                    lowOrhigh.textContent = 'Seu palpite está abaixo'
+                //Caso o palpite esteja acima do número sorteado
+                }else if (palpiteUsuario > randNum){
+                    lowOrhigh.textContent = 'Seu palpite está acima';
+                }
+            }
+            //Alimentando a variável (se o guessCount chegar em 10 o jogador perde.)
+            guessCount++;
+            //resetando o valor do input onde o palpite é inserido
+            guessField.value = '';
+            //Definindo o cursor diretamente no campo de palpite após um palpite
+            guessField.focus();
+        }
+        //Adicionando o evento que ocorrerá após a ativação do botão que envia o palpite
+        guessSubmit.addEventListener('click', conferirPalpite)
+
+        //Função de fim de jogo
+        function configFimDeJogo(){
+            //Desabilitando os campos de palpites e envio do palpite
+            guessField.disabled = true;
+            guessSubmit.disabled = true;
+            //Criando um novo botão para resetar o game
+            restartButton = document.createElement('button');
+            restartButton.textContent = 'Inicar novo jogo';
+            document.body.appendChild(restartButton);
+            //Estabelecendo o evento de restart do game
+            restartButton.addEventListener('click', restartGame);
+        }
+        //Função para resetar o game e jogar novamente
+        function restartGame(){
+            //Redefinindo a variável de contagem para 1
+            guessCount = 1;
+
+            //Selecionando todos os parágrafos dentro da div class "resultParas"
+            var resetParas =document.querySelectorAll('.resultParas p');
+            //Limpando todos os valores inseridos durante o jogo
+            for (var i = 0; i <resetParas.length; i++){
+                resetParas[i].textContent = '';
+            }
+
+            //Removendo o botão de restart game
+            restartButton.parentNode.removeChild(restartButton);
+
+            //Habilitando os campos de palpite e envio do palpite
+            guessField.disabled = false;
+            guessSubmit.disabled = false;
+            //Limpando os valores do campo de palpite
+            guessField.value = '';
+            guessField.focus();
+
+            //Voltando o campo Ultimo resultado para o estado original
+            lastResult.style.backgroundColor = 'white';
+
+            //Definindo um novo número aleatório
+            randNum = Math.floor(Math.random() * 100) + 1;
+}
+    </script>
+</body>
+</html>
